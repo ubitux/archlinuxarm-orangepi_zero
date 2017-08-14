@@ -51,6 +51,17 @@ In 4 steps:
 - copy the boot script in the /boot partition
 
 
+Ethernet
+========
+
+In order to get ethernet working, you will need a recent kernel (>= 4.13).  At
+the time I'm writing these lines, the latest stable is 4.12. Though, you can
+grab the [kernel RC package from ArchLinux ARM][linux-rc] and install it from
+the serial interface.
+
+[linux-rc]: https://archlinuxarm.org/packages/armv7h/linux-armv7-rc
+
+
 Goodies
 =======
 
@@ -61,7 +72,6 @@ If you have a serial cable and `miniterm.py` installed (`python-pyserial`),
 TODO
 ====
 
-- Make ethernet work (tested with 4.12.4)
 - remove u-boot patches when mainlined
 - upstream to ArchLinuxARM
 
