@@ -28,7 +28,7 @@ Here is a simple way to get one:
 Preparing the files
 ===================
 
-Run `make` (specifying jobs with `-jX` are supported and recommended).
+Run `make` (specifying jobs with `-jX` is supported and recommended).
 
 This will provide:
 
