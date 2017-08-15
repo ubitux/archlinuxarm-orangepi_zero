@@ -20,7 +20,7 @@ all: $(ALL)
 $(UBOOT_TARBALL):
 	$(WGET) https://github.com/u-boot/u-boot/archive/v$(UBOOT_VERSION).tar.gz -O $@
 $(UBOOT_DIR): $(UBOOT_TARBALL)
-	tar xf $^
+	tar xf $<
 	cd $@ && \
 		patch -p1 < ../patches/u-boot/0001-Makefile-honor-PYTHON-configuration-properly.patch && \
 		patch -p1 < ../patches/u-boot/0002-sunxi-reduce-Orange-Pi-Zero-DRAM-clock-speed.patch
@@ -29,13 +29,13 @@ $(ARCH_TARBALL):
 	$(WGET) http://archlinuxarm.org/os/$@
 
 $(UBOOT_BIN): $(UBOOT_DIR)
-	cd $^ && $(MAKE) orangepi_zero_defconfig && $(MAKE) CROSS_COMPILE=$(CROSS_COMPILE) PYTHON=$(PYTHON)
-	cp $^/$@ .
+	cd $< && $(MAKE) orangepi_zero_defconfig && $(MAKE) CROSS_COMPILE=$(CROSS_COMPILE) PYTHON=$(PYTHON)
+	cp $</$@ .
 
 # Note: non-deterministic output as the image header contains a timestamp and a
 # checksum including this timestamp (2x32-bit at offset 4)
 $(UBOOT_SCRIPT): boot.txt
-	mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d $^ $@
+	mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d $< $@
 boot.txt:
 	$(WGET) https://github.com/archlinuxarm/PKGBUILDs/blob/master/alarm/uboot-sunxi/$@
 
