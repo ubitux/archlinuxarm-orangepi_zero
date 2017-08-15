@@ -23,7 +23,8 @@ u-boot-build: u-boot
 	cp -r $^ $@
 	cd $@ && git am ../patches/u-boot/*.patch
 u-boot:
-	git clone --depth 1 git://git.denx.de/u-boot.git
+	git clone git://git.denx.de/u-boot.git
+	cd u-boot && git reset --hard v2017.09-rc2
 
 # Note: non-deterministic output as the image header contains a timestamp and a
 # checksum including this timestamp (2x32-bit at offset 4)
