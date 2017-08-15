@@ -34,7 +34,7 @@ This will provide:
 
 - the ArchLinuxARM armv7 default rootfs (`ArchLinuxARM-armv7-latest.tar.gz`)
 - an u-boot image compiled for the OrangePi Zero (`u-boot-sunxi-with-spl.bin`)
-- a boot script (`boot.scr`) to be copied in /boot
+- a boot script (`boot.scr`) to be copied in `/boot`
 
 
 Installing the distribution
@@ -47,7 +47,7 @@ In 4 steps:
 - create and format one ext4 partition
 - untar the rootfs into it
 - dd the u-boot image at offset 8192
-- copy the boot script in the /boot partition
+- copy the boot script in the `/boot` partition
 
 
 Ethernet
