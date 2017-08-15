@@ -6,7 +6,6 @@ Dependencies
 ============
 
 - `make`
-- `git`
 - `bsdtar` (`libarchive`)
 - `python2`
 
