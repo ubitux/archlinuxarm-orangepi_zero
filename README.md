@@ -8,6 +8,7 @@ Dependencies
 - `make`
 - `bsdtar` (`libarchive`)
 - `python2`
+- `uboot-tools`
 
 
 Prerequisite
