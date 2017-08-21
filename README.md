@@ -79,5 +79,4 @@ TODO
 U-Boot patches status
 =====================
 
-- clock speed patch is currently in uboot-sunxi (http://git.denx.de/?p=u-boot/u-boot-sunxi.git;a=commitdiff;h=8792a64d87708139bc0cf8b48d4a580a39167473)
-- Python patch is under review (http://patchwork.ozlabs.org/patch/801087/)
+Both patches are merged upstream, waiting for the next release including them.
