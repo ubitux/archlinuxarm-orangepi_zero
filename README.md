@@ -1,5 +1,5 @@
-This repository can be used to create an ArchLinuxARM image for the OrangePi
-Zero board.
+This repository can be used to create an ArchLinuxARM image for the NanoPi Neo2
+board.
 
 
 Dependencies
@@ -22,7 +22,8 @@ Here is a simple way to get one:
     cd crosstool-ng
     ./bootstrap
     ./configure --enable-local
-    ./ct-ng arm-unknown-eabi
+    make
+    ./ct-ng aarch64-unknown-linux-gnu
     ./ct-ng build
 
 
@@ -33,8 +34,8 @@ Run `make` (specifying jobs with `-jX` is supported and recommended).
 
 This will provide:
 
-- the ArchLinuxARM armv7 default rootfs (`ArchLinuxARM-armv7-latest.tar.gz`)
-- an u-boot image compiled for the OrangePi Zero (`u-boot-sunxi-with-spl.bin`)
+- the ArchLinuxARM aarch64 default rootfs (`ArchLinuxARM-aarch64-latest.tar.gz`)
+- an u-boot image compiled for the NanoPi Neo2 (`u-boot-sunxi-with-spl.bin`)
 - a boot script (`boot.scr`) to be copied in `/boot`
 
 
@@ -59,7 +60,7 @@ the time I'm writing these lines, the latest stable is 4.12. Though, you can
 grab the [kernel RC package from ArchLinux ARM][linux-rc] and install it from
 the serial interface.
 
-[linux-rc]: https://archlinuxarm.org/packages/armv7h/linux-armv7-rc
+[linux-rc]: https://archlinuxarm.org/packages/aarch64/linux-aarch64-rc
 
 
 Goodies
