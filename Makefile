@@ -78,6 +78,7 @@ install: $(UBOOT_BIN) $(UBOOT_SCRIPT) $(ARCH_TARBALL) $(KERNEL_TARBALL) fdisk.cm
 
 clean:
 	$(RM) $(ALL)
+	$(RM) boot.txt
 	$(RM) -r $(UBOOT_DIR)
 
 .PHONY: all serial clean install
