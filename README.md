@@ -9,6 +9,8 @@ Dependencies
 - `bsdtar` (`libarchive`)
 - `python2`
 - `uboot-tools`
+- `sudo`
+- `fdisk`
 
 
 Prerequisite
@@ -42,14 +44,13 @@ This will provide:
 Installing the distribution
 ===========================
 
-This is similar to any other AllWinner ArchLinuxARM installation: pick any from
-https://archlinuxarm.org/platforms/armv7/allwinner/.
+Run `make install BLOCK_DEVICE=/dev/mmcblk0` with the appropriate value for
+`BLOCK_DEVICE`.
 
-In 4 steps:
-- create and format one ext4 partition
-- untar the rootfs into it
-- dd the u-boot image at offset 8192
-- copy the boot script in the `/boot` partition
+This is running commands similar to [any other AllWinner ArchLinuxARM
+installation][alarm-allwinner].
+
+[alarm-allwinner]: https://archlinuxarm.org/platforms/armv7/allwinner/.
 
 
 Ethernet

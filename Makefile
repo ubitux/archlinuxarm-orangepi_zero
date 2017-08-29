@@ -4,6 +4,8 @@ WGET = wget
 MINITERM = miniterm.py
 CROSS_COMPILE ?= arm-unknown-eabi-
 PYTHON ?= python2
+BLOCK_DEVICE ?= /dev/null
+FIND ?= find
 
 UBOOT_SCRIPT = boot.scr
 UBOOT_BIN = u-boot-sunxi-with-spl.bin
@@ -13,6 +15,8 @@ ARCH_TARBALL = ArchLinuxARM-armv7-latest.tar.gz
 UBOOT_VERSION = 2017.09-rc2
 UBOOT_TARBALL = u-boot-v$(UBOOT_VERSION).tar.gz
 UBOOT_DIR = u-boot-$(UBOOT_VERSION)
+
+MOUNT_POINT = mnt
 
 ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT)
 
@@ -40,6 +44,29 @@ $(UBOOT_SCRIPT): boot.txt
 boot.txt:
 	$(WGET) https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/alarm/uboot-sunxi/$@
 
+define part1
+/dev/$(shell basename $(shell $(FIND) /sys/block/$(shell basename $(1))/ -maxdepth 2 -name "partition" -printf "%h"))
+endef
+
+install: $(ALL) fdisk.cmd
+ifeq ($(BLOCK_DEVICE),/dev/null)
+	@echo You must set BLOCK_DEVICE option
+else
+	sudo dd if=/dev/zero of=$(BLOCK_DEVICE) bs=1M count=8
+	sudo fdisk $(BLOCK_DEVICE) < fdisk.cmd
+	sync
+	sudo mkfs.ext4 $(call part1,$(BLOCK_DEVICE))
+	mkdir -p $(MOUNT_POINT)
+	sudo umount $(MOUNT_POINT) || true
+	sudo mount $(call part1,$(BLOCK_DEVICE)) $(MOUNT_POINT)
+	sudo bsdtar -xpf $(ARCH_TARBALL) -C $(MOUNT_POINT)
+	sudo cp $(UBOOT_SCRIPT) $(MOUNT_POINT)/boot
+	sync
+	sudo umount $(MOUNT_POINT) || true
+	rmdir $(MOUNT_POINT) || true
+	sudo dd if=$(UBOOT_BIN) of=$(BLOCK_DEVICE) bs=1024 seek=8
+endif
+
 serial:
 	$(MINITERM) --raw --eol=lf $(SERIAL_DEVICE) 115200
 
@@ -47,4 +74,4 @@ clean:
 	$(RM) $(ALL)
 	$(RM) -r $(UBOOT_DIR)
 
-.PHONY: all serial clean
+.PHONY: all serial clean install
