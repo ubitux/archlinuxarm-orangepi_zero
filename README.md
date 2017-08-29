@@ -22,6 +22,7 @@ Here is a simple way to get one:
     cd crosstool-ng
     ./bootstrap
     ./configure --enable-local
+    make
     ./ct-ng arm-unknown-eabi
     ./ct-ng build
 
