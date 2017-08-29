@@ -1,3 +1,4 @@
+# User configuration
 SERIAL_DEVICE = /dev/ttyUSB0
 WGET = wget
 MINITERM = miniterm.py
