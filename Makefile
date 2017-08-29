@@ -37,7 +37,7 @@ $(UBOOT_BIN): $(UBOOT_DIR)
 $(UBOOT_SCRIPT): boot.txt
 	mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d $< $@
 boot.txt:
-	$(WGET) https://github.com/archlinuxarm/PKGBUILDs/blob/master/alarm/uboot-sunxi/$@
+	$(WGET) https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/alarm/uboot-sunxi/$@
 
 serial:
 	$(MINITERM) --raw --eol=lf $(SERIAL_DEVICE) 115200
