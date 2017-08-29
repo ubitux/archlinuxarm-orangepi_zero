@@ -3,6 +3,7 @@ WGET = wget
 MINITERM = miniterm.py
 CROSS_COMPILE ?= aarch64-unknown-elf-
 PYTHON ?= python2
+BLOCK_DEVICE ?= /dev/null
 
 TRUSTED_FIRMWARE_TARBALL = allwinner.zip
 TRUSTED_FIRMWARE_DIR = arm-trusted-firmware-allwinner
@@ -16,6 +17,8 @@ ARCH_TARBALL = ArchLinuxARM-aarch64-latest.tar.gz
 UBOOT_VERSION = 2017.09-rc2
 UBOOT_TARBALL = u-boot-v$(UBOOT_VERSION).tar.gz
 UBOOT_DIR = u-boot-$(UBOOT_VERSION)
+
+MOUNT_POINT = mnt
 
 ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT)
 
@@ -55,10 +58,7 @@ boot.txt:
 serial:
 	$(MINITERM) --raw --eol=lf $(SERIAL_DEVICE) 115200
 
-BLOCK_DEVICE = /dev/mmcblk0
-MOUNT_POINT = mnt
-
-prepare: $(UBOOT_BIN) $(UBOOT_SCRIPT) $(ARCH_TARBALL) fdisk.cmd
+install: $(UBOOT_BIN) $(UBOOT_SCRIPT) $(ARCH_TARBALL) fdisk.cmd
 	sudo dd if=/dev/zero of=$(BLOCK_DEVICE) bs=1M count=8
 	sudo fdisk $(BLOCK_DEVICE) < fdisk.cmd
 	sudo mkfs.ext4 $(BLOCK_DEVICE)p1
@@ -77,4 +77,4 @@ clean:
 	$(RM) $(ALL)
 	$(RM) -r $(UBOOT_DIR)
 
-.PHONY: all serial clean
+.PHONY: all serial clean install
