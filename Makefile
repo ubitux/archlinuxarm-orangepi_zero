@@ -53,7 +53,7 @@ $(UBOOT_BIN): $(UBOOT_DIR) $(TRUSTED_FIRMWARE_BIN)
 $(UBOOT_SCRIPT): boot.txt
 	mkimage -A arm64 -O linux -T script -C none -n "U-Boot boot script" -d $< $@
 boot.txt:
-	$(WGET) $@
+	$(WGET) https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/alarm/uboot-pine64/$@
 
 serial:
 	$(MINITERM) --raw --eol=lf $(SERIAL_DEVICE) 115200
