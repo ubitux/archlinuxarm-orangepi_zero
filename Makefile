@@ -18,6 +18,9 @@ UBOOT_VERSION = 2017.09-rc2
 UBOOT_TARBALL = u-boot-v$(UBOOT_VERSION).tar.gz
 UBOOT_DIR = u-boot-$(UBOOT_VERSION)
 
+KERNEL_TARBALL = linux-aarch64-4.13.0-2-aarch64.pkg.tar.xz
+KERNEL_HEADERS_TARBALL = linux-aarch64-headers-4.13.0-2-aarch64.pkg.tar.xz
+
 MOUNT_POINT = mnt
 
 ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT)
@@ -44,6 +47,9 @@ $(UBOOT_DIR): $(UBOOT_TARBALL)
 $(ARCH_TARBALL):
 	$(WGET) http://archlinuxarm.org/os/$@
 
+$(KERNEL_TARBALL):
+	$(WGET) http://mirror.archlinuxarm.org/aarch64/core/$@
+
 $(UBOOT_BIN): $(UBOOT_DIR) $(TRUSTED_FIRMWARE_BIN)
 	cd $< && $(MAKE) nanopi_neo2_defconfig && $(MAKE) CROSS_COMPILE=$(CROSS_COMPILE) PYTHON=$(PYTHON) BL31=../$(TRUSTED_FIRMWARE_BIN)
 	cat $(UBOOT_DIR)/spl/sunxi-spl.bin $(UBOOT_DIR)/u-boot.itb > $@
@@ -58,7 +64,7 @@ boot.txt:
 serial:
 	$(MINITERM) --raw --eol=lf $(SERIAL_DEVICE) 115200
 
-install: $(UBOOT_BIN) $(UBOOT_SCRIPT) $(ARCH_TARBALL) fdisk.cmd
+install: $(UBOOT_BIN) $(UBOOT_SCRIPT) $(ARCH_TARBALL) $(KERNEL_TARBALL) fdisk.cmd
 	sudo dd if=/dev/zero of=$(BLOCK_DEVICE) bs=1M count=8
 	sudo fdisk $(BLOCK_DEVICE) < fdisk.cmd
 	sudo mkfs.ext4 $(BLOCK_DEVICE)p1
@@ -67,7 +73,7 @@ install: $(UBOOT_BIN) $(UBOOT_SCRIPT) $(ARCH_TARBALL) fdisk.cmd
 	sudo mount $(BLOCK_DEVICE)p1 $(MOUNT_POINT)
 	sudo bsdtar -xpf $(ARCH_TARBALL) -C $(MOUNT_POINT)
 	sudo cp $(UBOOT_SCRIPT) $(MOUNT_POINT)/boot
-	sudo cp $(UBOOT_DIR)/arch/arm/dts/sun50i-h5-nanopi-neo2.dtb mnt/boot/dtbs/allwinner
+	sudo pacman --arch aarch64 -r mnt -U $(KERNEL_TARBALL)
 	sync
 	sudo umount $(MOUNT_POINT) || true
 	rmdir $(MOUNT_POINT) || true
