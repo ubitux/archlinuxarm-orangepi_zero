@@ -73,11 +73,4 @@ If you have a serial cable and `miniterm.py` installed (`python-pyserial`),
 TODO
 ====
 
-- remove u-boot patches when mainlined
 - upstream to ArchLinuxARM
-
-
-U-Boot patches status
-=====================
-
-Both patches are merged upstream, waiting for the next release including them.

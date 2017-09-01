@@ -14,7 +14,7 @@ UBOOT_BIN = u-boot-sunxi-with-spl.bin
 
 ARCH_TARBALL = ArchLinuxARM-aarch64-latest.tar.gz
 
-UBOOT_VERSION = 2017.09-rc2
+UBOOT_VERSION = 2017.09-rc3
 UBOOT_TARBALL = u-boot-v$(UBOOT_VERSION).tar.gz
 UBOOT_DIR = u-boot-$(UBOOT_VERSION)
 
@@ -40,9 +40,6 @@ $(UBOOT_TARBALL):
 	$(WGET) https://github.com/u-boot/u-boot/archive/v$(UBOOT_VERSION).tar.gz -O $@
 $(UBOOT_DIR): $(UBOOT_TARBALL)
 	tar xf $<
-	cd $@ && \
-		patch -p1 < ../patches/u-boot/0001-Makefile-honor-PYTHON-configuration-properly.patch && \
-		patch -p1 < ../patches/u-boot/0002-sunxi-reduce-Orange-Pi-Zero-DRAM-clock-speed.patch
 
 $(ARCH_TARBALL):
 	$(WGET) http://archlinuxarm.org/os/$@
