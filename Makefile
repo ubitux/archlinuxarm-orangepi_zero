@@ -4,6 +4,7 @@ MINITERM = miniterm.py
 CROSS_COMPILE ?= aarch64-unknown-elf-
 PYTHON ?= python2
 BLOCK_DEVICE ?= /dev/null
+FIND ?= find
 
 TRUSTED_FIRMWARE_TARBALL = allwinner.zip
 TRUSTED_FIRMWARE_DIR = arm-trusted-firmware-allwinner
@@ -60,14 +61,20 @@ boot.txt:
 
 serial:
 	$(MINITERM) --raw --eol=lf $(SERIAL_DEVICE) 115200
+define part1
+/dev/$(shell basename $(shell $(FIND) /sys/block/$(shell basename $(1))/ -maxdepth 2 -name "partition" -printf "%h"))
+endef
 
 install: $(UBOOT_BIN) $(UBOOT_SCRIPT) $(ARCH_TARBALL) $(KERNEL_TARBALL) fdisk.cmd
+ifeq ($(BLOCK_DEVICE),/dev/null)
+	@echo You must set BLOCK_DEVICE option
+else
 	sudo dd if=/dev/zero of=$(BLOCK_DEVICE) bs=1M count=8
 	sudo fdisk $(BLOCK_DEVICE) < fdisk.cmd
-	sudo mkfs.ext4 $(BLOCK_DEVICE)p1
+	sudo mkfs.ext4 $(call part1,$(BLOCK_DEVICE))
 	mkdir -p $(MOUNT_POINT)
 	sudo umount $(MOUNT_POINT) || true
-	sudo mount $(BLOCK_DEVICE)p1 $(MOUNT_POINT)
+	sudo mount $(call part1,$(BLOCK_DEVICE)) $(MOUNT_POINT)
 	sudo bsdtar -xpf $(ARCH_TARBALL) -C $(MOUNT_POINT)
 	sudo cp $(UBOOT_SCRIPT) $(MOUNT_POINT)/boot
 	sudo pacman --arch aarch64 -r mnt -U $(KERNEL_TARBALL)
@@ -75,6 +82,7 @@ install: $(UBOOT_BIN) $(UBOOT_SCRIPT) $(ARCH_TARBALL) $(KERNEL_TARBALL) fdisk.cm
 	sudo umount $(MOUNT_POINT) || true
 	rmdir $(MOUNT_POINT) || true
 	sudo dd if=$(UBOOT_BIN) of=$(BLOCK_DEVICE) bs=1024 seek=8
+endif
 
 clean:
 	$(RM) $(ALL)
