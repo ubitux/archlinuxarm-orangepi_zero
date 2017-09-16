@@ -56,12 +56,14 @@ installation][alarm-allwinner].
 Ethernet
 ========
 
-In order to get ethernet working, you will need a recent kernel (>= 4.13).  At
-the time I'm writing these lines, the latest stable is 4.12. Though, you can
-grab the [kernel RC package from ArchLinux ARM][linux-rc] and install it from
-the serial interface.
+In order to get ethernet working, you will need to downgrade to the 4.13-rc7
+since the network support has been [reverted in 54f70f52e3][sunxi-revert]. You
+can install the package with `pacman -U
+/root/linux-armv7-rc-4.13.rc7-1-armv7h.pkg.tar.xz` using the [serial
+interface][opiz-serial].
 
-[linux-rc]: https://archlinuxarm.org/packages/armv7h/linux-armv7-rc
+[sunxi-revert]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=54f70f52e3b3a26164220d98a712a274bd28502f
+[opiz-serial]: http://linux-sunxi.org/Xunlong_Orange_Pi_Zero#Locating_the_UART
 
 
 Goodies

@@ -12,13 +12,15 @@ UBOOT_BIN = u-boot-sunxi-with-spl.bin
 
 ARCH_TARBALL = ArchLinuxARM-armv7-latest.tar.gz
 
+WORKING_KERNEL = linux-armv7-rc-4.13.rc7-1-armv7h.pkg.tar.xz
+
 UBOOT_VERSION = 2017.09
 UBOOT_TARBALL = u-boot-v$(UBOOT_VERSION).tar.gz
 UBOOT_DIR = u-boot-$(UBOOT_VERSION)
 
 MOUNT_POINT = mnt
 
-ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT)
+ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT) $(WORKING_KERNEL)
 
 all: $(ALL)
 
@@ -41,6 +43,9 @@ $(UBOOT_SCRIPT): boot.txt
 boot.txt:
 	$(WGET) https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/alarm/uboot-sunxi/$@
 
+$(WORKING_KERNEL):
+	$(WGET) http://tardis.tiny-vps.com/aarm/packages/l/linux-armv7-rc/$@
+
 define part1
 /dev/$(shell basename $(shell $(FIND) /sys/block/$(shell basename $(1))/ -maxdepth 2 -name "partition" -printf "%h"))
 endef
@@ -58,6 +63,7 @@ else
 	sudo mount $(call part1,$(BLOCK_DEVICE)) $(MOUNT_POINT)
 	sudo bsdtar -xpf $(ARCH_TARBALL) -C $(MOUNT_POINT)
 	sudo cp $(UBOOT_SCRIPT) $(MOUNT_POINT)/boot
+	sudo cp $(WORKING_KERNEL) $(MOUNT_POINT)/root
 	sync
 	sudo umount $(MOUNT_POINT) || true
 	rmdir $(MOUNT_POINT) || true
