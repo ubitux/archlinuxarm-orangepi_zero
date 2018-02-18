@@ -75,7 +75,7 @@ else
 	sudo umount $(MOUNT_POINT) || true
 	sudo mount $(call part1,$(BLOCK_DEVICE)) $(MOUNT_POINT)
 	sudo tar --warning=no-unknown-keyword -xpf $(ARCH_TARBALL) -C $(MOUNT_POINT)
-	sudo cp mkscr uboot.txt $(UBOOT_SCRIPT) $(MOUNT_POINT)/boot
+	sudo cp mkscr boot.txt $(UBOOT_SCRIPT) $(MOUNT_POINT)/boot
 	sudo cp $(WORKING_KERNEL) $(MOUNT_POINT)/root
 	sudo mkdir $(MOUNT_POINT)/boot/dtbs/overlay
 	sudo cp $(DTB) $(MOUNT_POINT)/boot/dtbs/overlay
