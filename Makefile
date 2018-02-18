@@ -12,15 +12,17 @@ UBOOT_BIN = u-boot-sunxi-with-spl.bin
 
 ARCH_TARBALL = ArchLinuxARM-armv7-latest.tar.gz
 
-WORKING_KERNEL = linux-armv7-rc-4.13.rc7-1-armv7h.pkg.tar.xz
+WORKING_KERNEL = linux-armv7-rc-4.16.rc1-1-armv7h.pkg.tar.xz
 
-UBOOT_VERSION = 2017.09
+UBOOT_VERSION = 2018.01
 UBOOT_TARBALL = u-boot-v$(UBOOT_VERSION).tar.gz
 UBOOT_DIR = u-boot-$(UBOOT_VERSION)
 
+DTB = sun8i-h3-usbhost2 sun8i-h3-usbhost3
+
 MOUNT_POINT = mnt
 
-ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT) $(WORKING_KERNEL)
+ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT) $(DTB) $(WORKING_KERNEL)
 
 all: $(ALL)
 
@@ -33,6 +35,7 @@ $(ARCH_TARBALL):
 	$(WGET) http://archlinuxarm.org/os/$@
 
 $(UBOOT_BIN): $(UBOOT_DIR)
+	cd $< && grep -q -F 'CONFIG_OF_LIBFDT_OVERLAY' configs/orangepi_zero_defconfig || echo 'CONFIG_OF_LIBFDT_OVERLAY=y' >> configs/orangepi_zero_defconfig
 	cd $< && $(MAKE) orangepi_zero_defconfig && $(MAKE) CROSS_COMPILE=$(CROSS_COMPILE) PYTHON=$(PYTHON)
 	cp $</$@ .
 
@@ -42,6 +45,10 @@ $(UBOOT_SCRIPT): boot.txt
 	mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d $< $@
 boot.txt:
 	$(WGET) https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/alarm/uboot-sunxi/$@
+
+$(DTB):
+	wget https://raw.githubusercontent.com/armbian/sunxi-DT-overlays/master/sun8i-h3/$@.dts
+	dtc -I dts -O dtb -o $@.dtb $@.dts
 
 $(WORKING_KERNEL):
 	$(WGET) http://tardis.tiny-vps.com/aarm/packages/l/linux-armv7-rc/$@
@@ -64,6 +71,8 @@ else
 	sudo bsdtar -xpf $(ARCH_TARBALL) -C $(MOUNT_POINT)
 	sudo cp $(UBOOT_SCRIPT) $(MOUNT_POINT)/boot
 	sudo cp $(WORKING_KERNEL) $(MOUNT_POINT)/root
+	sudo mkdir $(MOUNT_POINT)/boot/dtbs/overlay
+	sudo cp $(addsuffix .dtb, $(DTB)) $(MOUNT_POINT)/boot/dtbs/overlay
 	sync
 	sudo umount $(MOUNT_POINT) || true
 	rmdir $(MOUNT_POINT) || true
@@ -75,7 +84,6 @@ serial:
 
 clean:
 	$(RM) $(ALL)
-	$(RM) boot.txt
 	$(RM) -r $(UBOOT_DIR)
 
 .PHONY: all serial clean install
