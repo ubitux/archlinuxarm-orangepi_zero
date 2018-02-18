@@ -49,9 +49,9 @@ $(UBOOT_SCRIPT): boot.txt
 	mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d $< $@
 
 $(DTS):
-        $(WGET) -nc https://raw.githubusercontent.com/armbian/sunxi-DT-overlays/master/sun8i-h3/$@
+	$(WGET) -nc https://raw.githubusercontent.com/armbian/sunxi-DT-overlays/master/sun8i-h3/$@
 $(DTB): $(DTS)
-        dtc -I dts -O dtb -o $@ $<
+	dtc -I dts -O dtb -o $@ $<
 
 $(WORKING_KERNEL):
 	$(WGET) http://archlinuxarm.org/armv7h/core/$@
