@@ -89,7 +89,7 @@ serial:
 
 clean:
 	$(RM) $(ALL)
-	$(RM) *.{dts,dtc}
+	$(RM) $(UBOOT_TARBALL) $(DTS) $(DTB)
 	$(RM) -r $(UBOOT_DIR)
 
 .PHONY: all serial clean install
