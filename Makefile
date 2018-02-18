@@ -13,6 +13,9 @@ UBOOT_BIN = u-boot-sunxi-with-spl.bin
 
 ARCH_TARBALL = ArchLinuxARM-armv7-latest.tar.gz
 
+DTB = sun8i-h3-usbhost2.dtb sun8i-h3-usbhost3.dtb
+DTS = sun8i-h3-usbhost2.dts sun8i-h3-usbhost3.dts
+
 WORKING_KERNEL = linux-armv7-rc-4.16.rc1-1-armv7h.pkg.tar.xz
 
 UBOOT_VERSION = 2018.01
@@ -45,9 +48,10 @@ $(UBOOT_BIN): $(UBOOT_DIR)
 $(UBOOT_SCRIPT): boot.txt
 	mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d $< $@
 
-$(DTB):
-	wget -nc https://raw.githubusercontent.com/armbian/sunxi-DT-overlays/master/sun8i-h3/$@.dts
-	dtc -I dts -O dtb -o $@.dtb $@.dts
+$(DTS):
+        $(WGET) -nc https://raw.githubusercontent.com/armbian/sunxi-DT-overlays/master/sun8i-h3/$@
+$(DTB): $(DTS)
+        dtc -I dts -O dtb -o $@ $<
 
 $(WORKING_KERNEL):
 	$(WGET) http://archlinuxarm.org/armv7h/core/$@
@@ -63,6 +67,8 @@ else
 	sudo dd if=/dev/zero of=$(BLOCK_DEVICE) bs=1M count=8
 	sudo fdisk $(BLOCK_DEVICE) < fdisk.cmd
 	sync
+	partprobe $(BLOCK_DEVICE)
+	sleep 10 #Partiton may not appear immediately, part1 call may fail
 	sudo mkfs.ext4 $(call part1,$(BLOCK_DEVICE))
 	mkdir -p $(MOUNT_POINT)
 	sudo umount $(MOUNT_POINT) || true
@@ -83,6 +89,7 @@ serial:
 
 clean:
 	$(RM) $(ALL)
+	$(RM) *.{dts,dtc}
 	$(RM) -r $(UBOOT_DIR)
 
 .PHONY: all serial clean install
