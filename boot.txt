@@ -1,0 +1,24 @@
+if test -n ${distro_bootpart}; then setenv bootpart ${distro_bootpart}; else setenv bootpart 1; fi
+part uuid ${devtype} ${devnum}:${bootpart} uuid
+
+setenv overlays sun8i-h2-usbhost2 sun8i-h2-usbhost3
+setenv bootargs console=${console} root=PARTUUID=${uuid} rw rootwait
+setenv overlay_addr 0x44000000
+
+if load ${devtype} ${devnum}:${bootpart} ${kernel_addr_r} /boot/zImage; then
+  if load ${devtype} ${devnum}:${bootpart} ${fdt_addr_r} /boot/dtbs/${fdtfile}; then
+    fdt addr ${fdt_addr_r}
+    fdt resize 65536
+    for overlay_file in ${overlays}; do
+      load ${devtype} ${devnum}:${bootpart} ${overlay_addr} /boot/dtbs/overlay/${overlay_file}.dtb
+      echo "fdt apply ${overlay_addr}"
+      fdt apply ${overlay_addr}
+      echo "Applied /boot/dtbs/overlay/${overlay_file}.dtb"
+    done
+    if load ${devtype} ${devnum}:${bootpart} ${ramdisk_addr_r} /boot/initramfs-linux.img; then
+      bootz ${kernel_addr_r} ${ramdisk_addr_r}:${filesize} ${fdt_addr_r};
+    else
+      bootz ${kernel_addr_r} - ${fdt_addr_r};
+    fi;
+  fi;
+fi

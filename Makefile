@@ -44,8 +44,6 @@ $(UBOOT_BIN): $(UBOOT_DIR)
 # checksum including this timestamp (2x32-bit at offset 4)
 $(UBOOT_SCRIPT): boot.txt
 	mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d $< $@
-boot.txt:
-	$(WGET) -nc https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/alarm/uboot-sunxi/$@
 
 $(DTB):
 	wget -nc https://raw.githubusercontent.com/armbian/sunxi-DT-overlays/master/sun8i-h3/$@.dts
@@ -69,7 +67,7 @@ else
 	mkdir -p $(MOUNT_POINT)
 	sudo umount $(MOUNT_POINT) || true
 	sudo mount $(call part1,$(BLOCK_DEVICE)) $(MOUNT_POINT)
-	sudo bsdtar -xpf $(ARCH_TARBALL) -C $(MOUNT_POINT)
+	sudo tar --warning=no-unknown-keyword -xpf $(ARCH_TARBALL) -C $(MOUNT_POINT)
 	sudo cp $(UBOOT_SCRIPT) $(MOUNT_POINT)/boot
 	sudo cp $(WORKING_KERNEL) $(MOUNT_POINT)/root
 	sudo mkdir $(MOUNT_POINT)/boot/dtbs/overlay

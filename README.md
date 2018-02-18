@@ -6,7 +6,7 @@ Dependencies
 ============
 
 - `make`
-- `bsdtar` (`libarchive`)
+- `gnu tar`
 - `python2`
 - `uboot-tools`
 - `device-tree-compiler` >1.4.0 (1.4.5)
@@ -59,7 +59,7 @@ Building on Ubuntu 18.04
 ========================
 Using gcc-arm-linux-gnueabi, there is no need to use crosstool-ng to build the toolchain
 ```
-sudo apt-get install make bsdtar python python-dev uboot-tools swig bc device-tree-compiler gcc-arm-linux-gnueabi 
+sudo apt-get install make bsdtar python python-dev uboot-tools swig bc device-tree-compiler gcc-arm-linux-gnueabi
 ```
 
 Ethernet
