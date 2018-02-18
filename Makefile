@@ -90,7 +90,7 @@ serial:
 
 clean:
 	$(RM) $(ALL)
-	$(RM) $(UBOOT_TARBALL) $(DTS) $(DTB) $(MKSCR)
+	$(RM) $(UBOOT_TARBALL) $(DTS) $(DTB) mkscr
 	$(RM) -r $(UBOOT_DIR)
 
 .PHONY: all serial clean install
