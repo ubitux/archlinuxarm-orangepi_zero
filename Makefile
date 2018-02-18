@@ -2,7 +2,8 @@
 SERIAL_DEVICE = /dev/ttyUSB0
 WGET = wget
 MINITERM = miniterm.py
-CROSS_COMPILE ?= arm-unknown-eabi-
+#CROSS_COMPILE ?= arm-unknown-eabi-
+CROSS_COMPILE ?= arm-linux-gnueabi-
 PYTHON ?= python2
 BLOCK_DEVICE ?= /dev/null
 FIND ?= find
@@ -51,7 +52,7 @@ $(DTB):
 	dtc -I dts -O dtb -o $@.dtb $@.dts
 
 $(WORKING_KERNEL):
-	$(WGET) http://tardis.tiny-vps.com/aarm/packages/l/linux-armv7-rc/$@
+	$(WGET) http://archlinuxarm.org/armv7h/core/$@
 
 define part1
 /dev/$(shell basename $(shell $(FIND) /sys/block/$(shell basename $(1))/ -maxdepth 2 -name "partition" -printf "%h"))

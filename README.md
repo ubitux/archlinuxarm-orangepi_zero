@@ -55,6 +55,13 @@ installation][alarm-allwinner].
 [alarm-allwinner]: https://archlinuxarm.org/platforms/armv7/allwinner/.
 
 
+Building on Ubuntu 18.04
+========================
+Using gcc-arm-linux-gnueabi, there is no need to use crosstool-ng to build the toolchain
+```
+sudo apt-get install make bsdtar python python-dev uboot-tools swig bc device-tree-compiler gcc-arm-linux-gnueabi 
+```
+
 Ethernet
 ========
 
