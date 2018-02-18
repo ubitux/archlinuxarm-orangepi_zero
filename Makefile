@@ -28,7 +28,7 @@ ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT) $(DTB) $(WORKING_KERNEL)
 all: $(ALL)
 
 $(UBOOT_TARBALL):
-	$(WGET) https://github.com/u-boot/u-boot/archive/v$(UBOOT_VERSION).tar.gz -O $@
+	$(WGET) -nc https://github.com/u-boot/u-boot/archive/v$(UBOOT_VERSION).tar.gz -O $@
 $(UBOOT_DIR): $(UBOOT_TARBALL)
 	tar xf $<
 
@@ -45,10 +45,10 @@ $(UBOOT_BIN): $(UBOOT_DIR)
 $(UBOOT_SCRIPT): boot.txt
 	mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d $< $@
 boot.txt:
-	$(WGET) https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/alarm/uboot-sunxi/$@
+	$(WGET) -nc https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/alarm/uboot-sunxi/$@
 
 $(DTB):
-	wget https://raw.githubusercontent.com/armbian/sunxi-DT-overlays/master/sun8i-h3/$@.dts
+	wget -nc https://raw.githubusercontent.com/armbian/sunxi-DT-overlays/master/sun8i-h3/$@.dts
 	dtc -I dts -O dtb -o $@.dtb $@.dts
 
 $(WORKING_KERNEL):
