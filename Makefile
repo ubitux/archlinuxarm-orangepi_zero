@@ -22,11 +22,9 @@ UBOOT_VERSION = 2018.01
 UBOOT_TARBALL = u-boot-v$(UBOOT_VERSION).tar.gz
 UBOOT_DIR = u-boot-$(UBOOT_VERSION)
 
-DTB = sun8i-h3-usbhost2 sun8i-h3-usbhost3
-
 MOUNT_POINT = mnt
 
-ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT) $(DTB) $(WORKING_KERNEL)
+ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT) $(DTB) $(WORKING_KERNEL) mkscr
 
 all: $(ALL)
 
@@ -56,11 +54,14 @@ $(DTB): $(DTS)
 $(WORKING_KERNEL):
 	$(WGET) http://archlinuxarm.org/armv7h/core/$@
 
+mkscr:
+	$(WGET) https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/alarm/uboot-sunxi/mkscr
+
 define part1
 /dev/$(shell basename $(shell $(FIND) /sys/block/$(shell basename $(1))/ -maxdepth 2 -name "partition" -printf "%h"))
 endef
 
-install: $(ALL) fdisk.cmd
+install: $(ALL) fdisk.cmd mkscr
 ifeq ($(BLOCK_DEVICE),/dev/null)
 	@echo You must set BLOCK_DEVICE option
 else
@@ -74,10 +75,10 @@ else
 	sudo umount $(MOUNT_POINT) || true
 	sudo mount $(call part1,$(BLOCK_DEVICE)) $(MOUNT_POINT)
 	sudo tar --warning=no-unknown-keyword -xpf $(ARCH_TARBALL) -C $(MOUNT_POINT)
-	sudo cp $(UBOOT_SCRIPT) $(MOUNT_POINT)/boot
+	sudo cp mkscr uboot.txt $(UBOOT_SCRIPT) $(MOUNT_POINT)/boot
 	sudo cp $(WORKING_KERNEL) $(MOUNT_POINT)/root
 	sudo mkdir $(MOUNT_POINT)/boot/dtbs/overlay
-	sudo cp $(addsuffix .dtb, $(DTB)) $(MOUNT_POINT)/boot/dtbs/overlay
+	sudo cp $(DTB) $(MOUNT_POINT)/boot/dtbs/overlay
 	sync
 	sudo umount $(MOUNT_POINT) || true
 	rmdir $(MOUNT_POINT) || true
@@ -89,7 +90,7 @@ serial:
 
 clean:
 	$(RM) $(ALL)
-	$(RM) $(UBOOT_TARBALL) $(DTS) $(DTB)
+	$(RM) $(UBOOT_TARBALL) $(DTS) $(DTB) $(MKSCR)
 	$(RM) -r $(UBOOT_DIR)
 
 .PHONY: all serial clean install

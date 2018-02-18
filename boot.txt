@@ -1,7 +1,7 @@
 if test -n ${distro_bootpart}; then setenv bootpart ${distro_bootpart}; else setenv bootpart 1; fi
 part uuid ${devtype} ${devnum}:${bootpart} uuid
 
-setenv overlays sun8i-h2-usbhost2 sun8i-h2-usbhost3
+setenv overlays sun8i-h3-usbhost2 sun8i-h3-usbhost3
 setenv bootargs console=${console} root=PARTUUID=${uuid} rw rootwait
 setenv overlay_addr 0x44000000
 
