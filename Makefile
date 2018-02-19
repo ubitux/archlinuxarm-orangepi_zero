@@ -19,9 +19,6 @@ UBOOT_VERSION = 2018.01
 UBOOT_TARBALL = u-boot-v$(UBOOT_VERSION).tar.gz
 UBOOT_DIR = u-boot-$(UBOOT_VERSION)
 
-KERNEL_TARBALL = linux-aarch64-4.13.0-2-aarch64.pkg.tar.xz
-KERNEL_HEADERS_TARBALL = linux-aarch64-headers-4.13.0-2-aarch64.pkg.tar.xz
-
 MOUNT_POINT = mnt
 
 ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT)
@@ -45,9 +42,6 @@ $(UBOOT_DIR): $(UBOOT_TARBALL)
 $(ARCH_TARBALL):
 	$(WGET) http://archlinuxarm.org/os/$@
 
-$(KERNEL_TARBALL):
-	$(WGET) http://mirror.archlinuxarm.org/aarch64/core/$@
-
 $(UBOOT_BIN): $(UBOOT_DIR) $(TRUSTED_FIRMWARE_BIN)
 	cd $< && $(MAKE) nanopi_neo2_defconfig && $(MAKE) CROSS_COMPILE=$(CROSS_COMPILE) PYTHON=$(PYTHON) BL31=../$(TRUSTED_FIRMWARE_BIN)
 	cat $(UBOOT_DIR)/spl/sunxi-spl.bin $(UBOOT_DIR)/u-boot.itb > $@
@@ -65,7 +59,7 @@ define part1
 /dev/$(shell basename $(shell $(FIND) /sys/block/$(shell basename $(1))/ -maxdepth 2 -name "partition" -printf "%h"))
 endef
 
-install: $(UBOOT_BIN) $(UBOOT_SCRIPT) $(ARCH_TARBALL) $(KERNEL_TARBALL) fdisk.cmd
+install: $(UBOOT_BIN) $(UBOOT_SCRIPT) $(ARCH_TARBALL) fdisk.cmd
 ifeq ($(BLOCK_DEVICE),/dev/null)
 	@echo You must set BLOCK_DEVICE option
 else
@@ -77,7 +71,6 @@ else
 	sudo mount $(call part1,$(BLOCK_DEVICE)) $(MOUNT_POINT)
 	sudo bsdtar -xpf $(ARCH_TARBALL) -C $(MOUNT_POINT)
 	sudo cp $(UBOOT_SCRIPT) $(MOUNT_POINT)/boot
-	sudo pacman --arch aarch64 -r mnt -U $(KERNEL_TARBALL)
 	sync
 	sudo umount $(MOUNT_POINT) || true
 	rmdir $(MOUNT_POINT) || true
