@@ -15,7 +15,7 @@ UBOOT_BIN = u-boot-sunxi-with-spl.bin
 
 ARCH_TARBALL = ArchLinuxARM-aarch64-latest.tar.gz
 
-UBOOT_VERSION = 2017.09-rc3
+UBOOT_VERSION = 2018.01
 UBOOT_TARBALL = u-boot-v$(UBOOT_VERSION).tar.gz
 UBOOT_DIR = u-boot-$(UBOOT_VERSION)
 
