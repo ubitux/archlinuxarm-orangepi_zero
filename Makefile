@@ -26,6 +26,7 @@ MOUNT_POINT = mnt
 
 ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT) $(DTB) $(WORKING_KERNEL)
 
+expansion: all
 all: $(ALL)
 
 $(UBOOT_TARBALL):
