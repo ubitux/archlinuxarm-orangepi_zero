@@ -6,9 +6,10 @@ Dependencies
 ============
 
 - `make`
-- `bsdtar` (`libarchive`)
+- `gnu tar`
 - `python2`
-- `uboot-tools`
+- `u-boot-tools`
+- `device-tree-compiler` >1.4.0 (1.4.5)
 - `sudo`
 - `fdisk`
 
@@ -19,7 +20,7 @@ Prerequisite
 In order to build the image, you need a working ARM toolchain.
 
 Here is a simple way to get one:
-
+    sudo apt-get install make autoconf gcc gperf bison flex texinfo help2man libncurses5-dev
     git clone https://github.com/crosstool-ng/crosstool-ng
     cd crosstool-ng
     ./bootstrap
@@ -38,6 +39,7 @@ This will provide:
 
 - the ArchLinuxARM armv7 default rootfs (`ArchLinuxARM-armv7-latest.tar.gz`)
 - an u-boot image compiled for the OrangePi Zero (`u-boot-sunxi-with-spl.bin`)
+- device tree blobs for enabling USB ports on expansion board
 - a boot script (`boot.scr`) to be copied in `/boot`
 
 
@@ -53,24 +55,25 @@ installation][alarm-allwinner].
 [alarm-allwinner]: https://archlinuxarm.org/platforms/armv7/allwinner/.
 
 
-Ethernet
-========
-
-In order to get ethernet working, you will need to downgrade to the 4.13-rc7
-since the network support has been [reverted in 54f70f52e3][sunxi-revert]. You
-can install the package with `pacman -U
-/root/linux-armv7-rc-4.13.rc7-1-armv7h.pkg.tar.xz` using the [serial
-interface][opiz-serial].
-
-[sunxi-revert]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=54f70f52e3b3a26164220d98a712a274bd28502f
-[opiz-serial]: http://linux-sunxi.org/Xunlong_Orange_Pi_Zero#Locating_the_UART
-
+Building with Docker
+========================
+Included Dockerfile will create an ubuntu container with all required build tools.
+To disable building overlays for expansion card, change `EXPANSION=true` to `false` in `docker-compose.yml`
+```
+docker-compose up --build
+```
 
 Goodies
 =======
 
 If you have a serial cable and `miniterm.py` installed (`python-pyserial`),
 `make serial` will open a session with the appropriate settings.
+
+References
+==========
+https://wiki.archlinux.org/index.php/Orange_Pi
+https://github.com/archlinuxarm/PKGBUILDs/blob/master/alarm/uboot-sunxi/
+https://github.com/u-boot/u-boot/blob/master/doc/README.fdt-overlays
 
 
 TODO
