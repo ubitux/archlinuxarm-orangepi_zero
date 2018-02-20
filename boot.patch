@@ -1,0 +1,25 @@
+--- boot.txt	2018-02-20 12:52:33.000000000 -0700
++++ boot.txt.new	2018-02-20 12:50:54.000000000 -0700
+@@ -1,12 +1,20 @@
+-# After modifying, run ./mkscr
+-
+ if test -n ${distro_bootpart}; then setenv bootpart ${distro_bootpart}; else setenv bootpart 1; fi
+ part uuid ${devtype} ${devnum}:${bootpart} uuid
+ 
++setenv overlays sun8i-h3-usbhost2 sun8i-h3-usbhost3
+ setenv bootargs console=${console} root=PARTUUID=${uuid} rw rootwait
++setenv overlay_addr 0x44000000
+ 
+ if load ${devtype} ${devnum}:${bootpart} ${kernel_addr_r} /boot/zImage; then
+   if load ${devtype} ${devnum}:${bootpart} ${fdt_addr_r} /boot/dtbs/${fdtfile}; then
++    fdt addr ${fdt_addr_r}
++    fdt resize 65536
++    for overlay_file in ${overlays}; do
++      load ${devtype} ${devnum}:${bootpart} ${overlay_addr} /boot/dtbs/overlay/${overlay_file}.dtb
++      echo "fdt apply ${overlay_addr}"
++      fdt apply ${overlay_addr}
++      echo "Applied /boot/dtbs/overlay/${overlay_file}.dtb"
++    done
+     if load ${devtype} ${devnum}:${bootpart} ${ramdisk_addr_r} /boot/initramfs-linux.img; then
+       bootz ${kernel_addr_r} ${ramdisk_addr_r}:${filesize} ${fdt_addr_r};
+     else

@@ -8,7 +8,7 @@ Dependencies
 - `make`
 - `gnu tar`
 - `python2`
-- `uboot-tools`
+- `u-boot-tools`
 - `device-tree-compiler` >1.4.0 (1.4.5)
 - `sudo`
 - `fdisk`
@@ -55,31 +55,25 @@ installation][alarm-allwinner].
 [alarm-allwinner]: https://archlinuxarm.org/platforms/armv7/allwinner/.
 
 
-Building on Ubuntu 18.04
+Building with Docker
 ========================
-Using gcc-arm-linux-gnueabi, there is no need to use crosstool-ng to build the toolchain
+Included Dockerfile will create an ubuntu container with all required build tools.
+To disable building overlays for expansion card, change `EXPANSION=true` to `false` in `docker-compose.yml`
 ```
-sudo apt-get install make bsdtar python python-dev uboot-tools swig bc device-tree-compiler gcc-arm-linux-gnueabi
+docker-compose up --build
 ```
-
-Ethernet
-========
-
-In order to get ethernet working, you will need to downgrade to the 4.13-rc7
-since the network support has been [reverted in 54f70f52e3][sunxi-revert]. You
-can install the package with `pacman -U
-/root/linux-armv7-rc-4.13.rc7-1-armv7h.pkg.tar.xz` using the [serial
-interface][opiz-serial].
-
-[sunxi-revert]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=54f70f52e3b3a26164220d98a712a274bd28502f
-[opiz-serial]: http://linux-sunxi.org/Xunlong_Orange_Pi_Zero#Locating_the_UART
-
 
 Goodies
 =======
 
 If you have a serial cable and `miniterm.py` installed (`python-pyserial`),
 `make serial` will open a session with the appropriate settings.
+
+References
+==========
+https://wiki.archlinux.org/index.php/Orange_Pi
+https://github.com/archlinuxarm/PKGBUILDs/blob/master/alarm/uboot-sunxi/
+https://github.com/u-boot/u-boot/blob/master/doc/README.fdt-overlays
 
 
 TODO

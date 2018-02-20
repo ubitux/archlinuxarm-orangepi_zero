@@ -16,18 +16,19 @@ ARCH_TARBALL = ArchLinuxARM-armv7-latest.tar.gz
 DTB = sun8i-h3-usbhost2.dtb sun8i-h3-usbhost3.dtb
 DTS = sun8i-h3-usbhost2.dts sun8i-h3-usbhost3.dts
 
-WORKING_KERNEL = linux-armv7-rc-4.16.rc1-1-armv7h.pkg.tar.xz
-
 UBOOT_VERSION = 2018.01
 UBOOT_TARBALL = u-boot-v$(UBOOT_VERSION).tar.gz
 UBOOT_DIR = u-boot-$(UBOOT_VERSION)
 
 MOUNT_POINT = mnt
 
-ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT) $(DTB) $(WORKING_KERNEL)
+ifeq ($(EXPANSION), true)
+all: $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT) $(DTB)
+else
+all: $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT)
+endif
 
-expansion: all
-all: $(ALL)
+uboot: $(UBOOT_BIN) $(UBOOT_SCRIPT) $(DTB)
 
 $(UBOOT_TARBALL):
 	$(WGET) -nc https://github.com/u-boot/u-boot/archive/v$(UBOOT_VERSION).tar.gz -O $@
@@ -46,14 +47,16 @@ $(UBOOT_BIN): $(UBOOT_DIR)
 # checksum including this timestamp (2x32-bit at offset 4)
 $(UBOOT_SCRIPT): boot.txt
 	mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d $< $@
+boot.txt:
+	$(WGET) https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/alarm/uboot-sunxi/$@
+ifeq ($(EXPANSION), true)
+	patch boot.txt boot.patch
+endif
 
 $(DTS):
 	$(WGET) -nc https://raw.githubusercontent.com/armbian/sunxi-DT-overlays/master/sun8i-h3/$@
 $(DTB): $(DTS)
 	dtc -I dts -O dtb -o $@ $<
-
-$(WORKING_KERNEL):
-	$(WGET) http://archlinuxarm.org/armv7h/core/$@
 
 mkscr:
 	$(WGET) https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/alarm/uboot-sunxi/mkscr
@@ -77,9 +80,10 @@ else
 	sudo mount $(call part1,$(BLOCK_DEVICE)) $(MOUNT_POINT)
 	sudo tar --warning=no-unknown-keyword -xpf $(ARCH_TARBALL) -C $(MOUNT_POINT)
 	sudo cp mkscr boot.txt $(UBOOT_SCRIPT) $(MOUNT_POINT)/boot
-	sudo cp $(WORKING_KERNEL) $(MOUNT_POINT)/root
+ifeq ($(EXPANSION), true)
 	sudo mkdir $(MOUNT_POINT)/boot/dtbs/overlay
 	sudo cp $(DTB) $(MOUNT_POINT)/boot/dtbs/overlay
+else
 	sync
 	sudo umount $(MOUNT_POINT) || true
 	rmdir $(MOUNT_POINT) || true
