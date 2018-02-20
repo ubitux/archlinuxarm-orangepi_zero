@@ -83,7 +83,7 @@ else
 ifeq ($(EXPANSION), true)
 	sudo mkdir $(MOUNT_POINT)/boot/dtbs/overlay
 	sudo cp $(DTB) $(MOUNT_POINT)/boot/dtbs/overlay
-else
+endif
 	sync
 	sudo umount $(MOUNT_POINT) || true
 	rmdir $(MOUNT_POINT) || true
