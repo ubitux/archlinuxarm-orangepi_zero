@@ -16,3 +16,5 @@ rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /app
 WORKDIR  /app
+
+CMD ["make"]
