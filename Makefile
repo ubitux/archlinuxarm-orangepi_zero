@@ -1,7 +1,8 @@
+# User configuration
 SERIAL_DEVICE = /dev/ttyUSB0
 WGET = wget
 MINITERM = miniterm.py
-CROSS_COMPILE ?= aarch64-unknown-elf-
+CROSS_COMPILE ?= aarch64-linux-gnu-
 PYTHON ?= python2
 BLOCK_DEVICE ?= /dev/null
 FIND ?= find
@@ -15,7 +16,7 @@ UBOOT_BIN = u-boot-sunxi-with-spl.bin
 
 ARCH_TARBALL = ArchLinuxARM-aarch64-latest.tar.gz
 
-UBOOT_VERSION = 2018.01
+UBOOT_VERSION = 2018.03
 UBOOT_TARBALL = u-boot-v$(UBOOT_VERSION).tar.gz
 UBOOT_DIR = u-boot-$(UBOOT_VERSION)
 
@@ -65,7 +66,7 @@ ifeq ($(BLOCK_DEVICE),/dev/null)
 else
 	sudo dd if=/dev/zero of=$(BLOCK_DEVICE) bs=1M count=8
 	sudo fdisk $(BLOCK_DEVICE) < fdisk.cmd
-	sudo mkfs.ext4 $(call part1,$(BLOCK_DEVICE))
+	sudo mkfs.f2fs $(call part1,$(BLOCK_DEVICE))
 	mkdir -p $(MOUNT_POINT)
 	sudo umount $(MOUNT_POINT) || true
 	sudo mount $(call part1,$(BLOCK_DEVICE)) $(MOUNT_POINT)

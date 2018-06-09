@@ -1,6 +1,7 @@
 This repository can be used to create an ArchLinuxARM image for the NanoPi Neo2
 board.
 
+Modified to build a image suitable for f2fs, see F2FS-howto.md for instructions
 
 Dependencies
 ============
