@@ -1,5 +1,9 @@
+# After modifying, run ./mkscr
 
-setenv bootargs console=${console} root=/dev/mmcblk0p2 rw rootwait rootfstype=f2fs
+# Set root partition to the second partition of boot device
+part uuid ${devtype} ${devnum}:${bootpart} uuid
+
+setenv bootargs console=${console} root=PARTUUID=${uuid} rw rootwait
 
 if load ${devtype} ${devnum}:${bootpart} ${kernel_addr_r} /Image; then
   if load ${devtype} ${devnum}:${bootpart} ${fdt_addr_r} /dtbs/${fdtfile}; then

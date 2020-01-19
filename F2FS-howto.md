@@ -11,41 +11,40 @@ load mmc 0:1 ${initrd_loadaddr} /initramfs-linux.img
 - Remove setenv dtbfile from u-boot script
 - Recompilate u-boot script with `make boot.scr`
 
+- Zero the beginning of the SD card
+
+    dd if=/dev/zero of=/dev/sdX bs=1M count=8
+
+- Partition the SD card
+
     lsblk
 
     sudo fdisk /dev/sdX
 
 clear partitions on the drive (o)
 
-create first partition (n, p, 1, enter, +100M, t, c)
+create first partition (n, p, 1, enter, +128M, t, c)
 
 create second partition (n, p, 2, enter, enter), then write and exit (w)
 
-    sudo mkfs.vfat /dev/sdX1
-
-    sudo mkdir /mnt/boot
-
-    sudo mount /dev/sdX1 /mnt/boot
+    sudo mkfs.vfat /dev/mmcblk0p1
 
 (you need to install f2fs-tools)
 
-    sudo mkfs.f2fs /dev/sdX2
+    sudo mkfs.f2fs /dev/mmcblk0p2
 
-    sudo mkdir /mnt/root
+    sudo mkdir /mnt/sd
 
-    sudo mount -t f2fs /dev/sdX2 /mnt/root
+    sudo mount /dev/mmcblk0p2 /mnt/sd
 
-    wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+    sudo mkdir /mnt/sd/boot
 
-    there is ArchLinuxARM-rpi-2-latest.tar.gz and ArchLinuxARM-rpi-3-latest.tar.gz exist, both work for pi 3, the latter one have a 64-bit kernel and aarch64 rootfs, but the 
-performance seems not good as the first one, so I will still use ArchLinuxARM-rpi-2-latest.tar.gz
+    sudo mount /dev/mmcblk0p1 /mnt/sd/boot
 
-    sudo su
+you need to install bsdtar instead of gnu tar
 
-    you need to install bsdtar instead of gnu tar
-
-    bsdtar -xpf ArchLinuxARM-rpi-2-latest.tar.gz -C /mnt/root
+    sudo bsdtar -xpf ArchLinuxARM-rpi-2-latest.tar.gz -C /mnt/sd
 
     sync
 
-    mv /mnt/root/boot/* /mnt/boot
+    sudo dd if=u-boot-sunxi-with-spl.bin of=/dev/mmcblk0 bs=1024 seek=8
