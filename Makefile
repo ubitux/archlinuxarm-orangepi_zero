@@ -79,4 +79,4 @@ distclean: clean
 	$(RM) $(UBOOT_TARBALL)
 	$(RM) $(TRUSTED_FIRMWARE_TARBALL)
 
-.PHONY: all serial clean install
+.PHONY: all serial clean distclean install
