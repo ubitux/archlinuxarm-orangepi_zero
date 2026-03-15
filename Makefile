@@ -34,21 +34,20 @@ $(UBOOT_TARBALL):
 	curl -L https://github.com/u-boot/u-boot/archive/refs/tags/v$(UBOOT_VERSION).tar.gz -o $@
 $(UBOOT_DIR): $(UBOOT_TARBALL)
 	tar xf $<
-
-$(ARCH_TARBALL):
-	curl -L http://archlinuxarm.org/os/$@ -o $@
-
 $(UBOOT_BIN): $(UBOOT_DIR) $(TRUSTED_FIRMWARE_BIN)
 	cd $< && $(MAKE) nanopi_neo2_defconfig && $(MAKE) CROSS_COMPILE=$(CROSS_COMPILE) BL31=../$(TRUSTED_FIRMWARE_BIN)
 	cp $(UBOOT_DIR)/$@ $@
-
 # Note: non-deterministic output as the image header contains a timestamp and a
 # checksum including this timestamp (2x32-bit at offset 4)
 $(UBOOT_SCRIPT): boot.txt
 	mkimage -A arm64 -O linux -T script -C none -n "U-Boot boot script" -d $< $@
 
+$(ARCH_TARBALL):
+	curl -L http://archlinuxarm.org/os/$@ -o $@
+
 serial:
 	pyserial-miniterm --raw --eol=lf $(SERIAL_DEVICE) 115200
+
 define part1
 $$(lsblk -ln -o PATH $(1) | tail -n1)
 endef
