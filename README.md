@@ -12,22 +12,14 @@ board.
 - `aarch64-linux-gnu-gcc`
 
 
-## Preparing the files
+## Setup
 
-Run `make` (specifying jobs with `-jX` is supported and recommended).
-
-This will provide:
-
-- the ArchLinuxARM aarch64 default rootfs (`ArchLinuxARM-aarch64-latest.tar.gz`)
-- an u-boot image compiled for the NanoPi Neo2 (`u-boot-sunxi-with-spl.bin`)
-- a boot script (`boot.scr`) to be copied in `/boot`
-
-
-## Installing the distribution
-
-Run `make install BLOCK_DEVICE=/dev/mmcblk0` with the appropriate value for
-`BLOCK_DEVICE`.
-
+```sh
+# Pull the Archlinux rootfs, trusted firmware, u-boot, and builds everything
+make -j$(nproc)
+# Install on a microSD
+make install BLOCK_DEVICE=/dev/sdX
+```
 
 ## Goodies
 
