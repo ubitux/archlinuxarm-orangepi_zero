@@ -18,12 +18,14 @@ UBOOT_DIR = u-boot-$(UBOOT_VERSION)
 
 MOUNT_POINT = mnt
 
+CURL = curl -sSLf
+
 ALL = $(ARCH_TARBALL) $(UBOOT_BIN) $(UBOOT_SCRIPT)
 
 all: $(ALL)
 
 $(TRUSTED_FIRMWARE_TARBALL):
-	curl -L https://github.com/ARM-software/arm-trusted-firmware/archive/refs/tags/v$(TRUSTED_FIRMWARE_VERSION).tar.gz -o $@
+	$(CURL) https://github.com/ARM-software/arm-trusted-firmware/archive/refs/tags/v$(TRUSTED_FIRMWARE_VERSION).tar.gz -o $@
 $(TRUSTED_FIRMWARE_DIR): $(TRUSTED_FIRMWARE_TARBALL)
 	tar xf $<
 $(TRUSTED_FIRMWARE_BIN): $(TRUSTED_FIRMWARE_DIR)
@@ -31,7 +33,7 @@ $(TRUSTED_FIRMWARE_BIN): $(TRUSTED_FIRMWARE_DIR)
 	cp $</build/sun50i_a64/debug/$@ .
 
 $(UBOOT_TARBALL):
-	curl -L https://github.com/u-boot/u-boot/archive/refs/tags/v$(UBOOT_VERSION).tar.gz -o $@
+	$(CURL) https://github.com/u-boot/u-boot/archive/refs/tags/v$(UBOOT_VERSION).tar.gz -o $@
 $(UBOOT_DIR): $(UBOOT_TARBALL)
 	tar xf $<
 $(UBOOT_BIN): $(UBOOT_DIR) $(TRUSTED_FIRMWARE_BIN)
@@ -43,7 +45,7 @@ $(UBOOT_SCRIPT): boot.txt
 	mkimage -A arm64 -O linux -T script -C none -n "U-Boot boot script" -d $< $@
 
 $(ARCH_TARBALL):
-	curl -L http://archlinuxarm.org/os/$@ -o $@
+	$(CURL) http://archlinuxarm.org/os/$@ -o $@
 
 serial:
 	pyserial-miniterm --raw --eol=lf $(SERIAL_DEVICE) 115200
